@@ -114,11 +114,19 @@
 
             <div class="d-flex align-items-center">
 
-                <i class="fas fa-bread-slice text-warning me-2"></i>
+                <i class="fas fa-bread-slice text-warning me-3 fs-4"></i>
 
-                <span class="fw-bold">
-                    KChuu Bakery Admin
-                </span>
+                <div>
+
+                    <div class="fw-bold">
+                        KChuu Bakery Admin
+                    </div>
+
+                    <small class="text-muted">
+                        Nanda Rahayu Widiyanti - 411232038
+                    </small>
+
+                </div>
 
             </div>
 
@@ -184,11 +192,22 @@
 
 
 
-    <!-- BOOTSTRAP JS -->
+<!-- BOOTSTRAP JS -->
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    @stack('scripts')
+@stack('scripts')
+
+
+<!-- FOOTER -->
+
+<footer class="text-center py-3 text-muted small bg-white border-top">
+
+    © 2026 KChuu Bakery System |
+    Developed by Nana'S |
+    Universitas Dian Nusantara
+
+</footer>
 
 </body>
 

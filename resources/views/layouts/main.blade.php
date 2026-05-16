@@ -274,7 +274,7 @@
              width="120"
              class="rounded">
 
-        <!-- <input type="text"
+        <!-- kalo ada yg begini referensi project baru kalo untuk link <input type="text"
                name="gambar_link"
                class="form-control mt-3"
                placeholder="Atau Link Gambar"> -->
