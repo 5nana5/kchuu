@@ -152,12 +152,11 @@
 
         <div>
             <h5 class="fw-bold mb-1">
-                Waktu Realtime
+                Jam Berapa Sekarang?
             </h5>
 
             <p class="text-muted mb-0">
-                Jam dan tanggal otomatis sistem.
-            </p>
+                Ingat, jangan lupa makan dan minum secukupnya yaa~            </p>
         </div>
 
         <div class="text-end clock-box">
