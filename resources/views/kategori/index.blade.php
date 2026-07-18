@@ -76,14 +76,17 @@
 
         </div>
 
+
         <button class="btn btn-light rounded-4 px-4 fw-semibold shadow-sm"
                 data-bs-toggle="modal"
                 data-bs-target="#createKategoriModal">
 
             <i class="fas fa-plus me-2"></i>
+
             Tambah Kategori
 
         </button>
+
 
     </div>
 
@@ -91,13 +94,37 @@
 
 
 
+
 <!-- ALERT -->
+
+@if ($errors->any())
+
+<div class="alert alert-danger rounded-4 shadow-sm">
+
+    <ul class="mb-0">
+
+        @foreach ($errors->all() as $error)
+
+            <li>{{ $error }}</li>
+
+        @endforeach
+
+    </ul>
+
+</div>
+
+@endif
+
+
 
 @if(session('success'))
 
 <div class="alert alert-success alert-dismissible fade show border-0 rounded-4 shadow-sm">
 
+    <i class="fas fa-circle-check me-2"></i>
+
     {{ session('success') }}
+
 
     <button type="button"
             class="btn-close"
@@ -106,13 +133,17 @@
 </div>
 
 @endif
+
 
 
 @if(session('error'))
 
 <div class="alert alert-danger alert-dismissible fade show border-0 rounded-4 shadow-sm">
 
+    <i class="fas fa-circle-exclamation me-2"></i>
+
     {{ session('error') }}
+
 
     <button type="button"
             class="btn-close"
@@ -121,8 +152,6 @@
 </div>
 
 @endif
-
-
 
 <!-- TABLE -->
 
@@ -212,7 +241,7 @@
 
                                     <button type="submit"
                                             class="btn btn-danger btn-sm btn-action"
-                                            onclick="return confirm('Hapus kategori ini?')">
+                                            onclick="return confirm('Yakin ingin menghapus kategori ini?')">
 
                                         <i class="fas fa-trash"></i>
 
@@ -294,11 +323,13 @@
                     </label>
 
                     <input type="text"
-                           name="nama_kategori"
-                           class="form-control"
-                           required>
+                        name="nama_kategori"
+                        class="form-control"
+                        value="{{ old('nama_kategori') }}"
+                        placeholder="Contoh: Roti"
+                        required>
 
-                </div>
+                    </div>
 
                 <div class="modal-footer border-0">
 

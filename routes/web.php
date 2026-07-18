@@ -1,17 +1,17 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\Produk;
 use App\Models\Kategori;
+use App\Models\SaleTransaction;
 
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\ProfileController;
-
-
+use App\Http\Controllers\SaleTransactionController;
+use App\Http\Controllers\StockTransactionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,19 +19,9 @@ use App\Http\Controllers\ProfileController;
 |--------------------------------------------------------------------------
 */
 
-
-
-/*
-|--------------------------------------------------------------------------
-| HALAMAN AWAL
-|--------------------------------------------------------------------------
-*/
-
 Route::get('/', function () {
     return view('welcome');
 });
-
-
 
 /*
 |--------------------------------------------------------------------------
@@ -43,10 +33,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/dashboard', function () {
 
-        // =========================
-        // DATA PRODUK & KATEGORI
-        // =========================
-
+        // Data Produk & Kategori
         $produks = Produk::with('kategori')
             ->latest()
             ->get();
@@ -55,54 +42,43 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->latest()
             ->get();
 
+        $penjualanKategori = Kategori::leftJoin('produks', 'kategoris.id', '=', 'produks.kategori_id')
+            ->leftJoin('sale_transactions', 'produks.id', '=', 'sale_transactions.produk_id')
+            ->select(
+                'kategoris.nama_kategori',
+                DB::raw('COALESCE(SUM(sale_transactions.qty),0) as total_penjualan')
+            )
+            ->groupBy('kategoris.id', 'kategoris.nama_kategori')
+            ->get();
 
-        // =========================
-        // BACKGROUND DASHBOARD
-        // =========================
+        // Data Penjualan
+        $totalTransaksi = SaleTransaction::count();
 
-        $backgroundUrl = null;
+        $totalPendapatan = SaleTransaction::sum('total');
 
-        $settingsPath = storage_path('app/background-settings.json');
+        $transaksiTerbaru = SaleTransaction::with('produk')
+            ->latest()
+            ->take(5)
+            ->get();
 
-        if (file_exists($settingsPath)) {
+        // System Insight
+        $produkStokTerendah = Produk::orderBy('stok')->first();
 
-            $settings = json_decode(
-                file_get_contents($settingsPath),
-                true
-            ) ?: [];
-
-            // Background upload local
-            if (!empty($settings['background_file'])) {
-
-                $backgroundUrl = asset(
-                    'storage/' . $settings['background_file']
-                );
-
-            }
-
-            // Background URL internet
-            elseif (!empty($settings['background_url'])) {
-
-                $backgroundUrl = $settings['background_url'];
-
-            }
-
-        }
-
-
-        // =========================
-        // RETURN VIEW DASHBOARD
-        // =========================
+        $produkTerlaris = Produk::withCount('saleTransactions')
+            ->orderByDesc('sale_transactions_count')
+            ->first();
 
         return view('dashboard', compact(
             'produks',
             'kategoris',
-            'backgroundUrl'
+            'penjualanKategori',
+            'totalTransaksi',
+            'totalPendapatan',
+            'transaksiTerbaru',
+            'produkStokTerendah',
+            'produkTerlaris'
         ));
-
     })->name('dashboard');
-
-
 
     /*
     |--------------------------------------------------------------------------
@@ -110,174 +86,30 @@ Route::middleware(['auth', 'verified'])->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    Route::resource('kategori', KategoriController::class);
+    Route::resource('kategori', KategoriController::class)
+        ->except(['show']);
 
     Route::resource('produk', ProdukController::class);
 
+    Route::resource('sale-transactions', SaleTransactionController::class);
 
+    Route::resource('stock-transactions', StockTransactionController::class);
 
     /*
     |--------------------------------------------------------------------------
-    | BACKGROUND CUSTOMIZER
+    | REPORT PENJUALAN
     |--------------------------------------------------------------------------
     */
 
-    Route::post('/dashboard/background', function (Request $request) {
+    Route::get(
+        '/sale-transactions/export/excel',
+        [SaleTransactionController::class, 'exportExcel']
+    )->name('sale-transactions.export.excel');
 
-        $request->validate([
-
-            'background_image' =>
-                'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
-
-            'background_url' =>
-                'nullable|url',
-
-        ]);
-
-
-        // =========================
-        // LOAD FILE SETTINGS
-        // =========================
-
-        $settingsPath = storage_path(
-            'app/background-settings.json'
-        );
-
-        $settings = file_exists($settingsPath)
-
-            ? json_decode(
-                file_get_contents($settingsPath),
-                true
-            )
-
-            : [];
-
-        $settings = is_array($settings)
-            ? $settings
-            : [];
-
-
-        // =========================
-        // RESET BACKGROUND
-        // =========================
-
-        if ($request->input('action') === 'reset') {
-
-            if (!empty($settings['background_file'])) {
-
-                Storage::disk('public')->delete(
-                    $settings['background_file']
-                );
-
-            }
-
-            file_put_contents(
-                $settingsPath,
-                json_encode([])
-            );
-
-            return redirect()
-                ->route('dashboard')
-                ->with(
-                    'success',
-                    'Latar belakang berhasil direset.'
-                );
-
-        }
-
-
-        // =========================
-        // UPLOAD GAMBAR
-        // =========================
-
-        if ($request->hasFile('background_image')) {
-
-            // Hapus background lama
-            if (!empty($settings['background_file'])) {
-
-                Storage::disk('public')->delete(
-                    $settings['background_file']
-                );
-
-            }
-
-            // Simpan gambar baru
-            $path = $request->file('background_image')
-                ->store('backgrounds', 'public');
-
-            $settings = [
-
-                'background_file' => $path,
-
-                'background_url' => null
-
-            ];
-
-        }
-
-
-        // =========================
-        // BACKGROUND VIA URL
-        // =========================
-
-        elseif ($request->filled('background_url')) {
-
-            // Hapus file lama
-            if (!empty($settings['background_file'])) {
-
-                Storage::disk('public')->delete(
-                    $settings['background_file']
-                );
-
-            }
-
-            $settings = [
-
-                'background_file' => null,
-
-                'background_url' => $request->background_url
-
-            ];
-
-        }
-
-
-        // =========================
-        // VALIDASI KOSONG
-        // =========================
-
-        else {
-
-            return back()->withErrors([
-
-                'background_image' =>
-                    'Unggah gambar atau masukkan link gambar.'
-
-            ]);
-
-        }
-
-
-        // =========================
-        // SIMPAN SETTINGS
-        // =========================
-
-        file_put_contents(
-            $settingsPath,
-            json_encode($settings)
-        );
-
-
-        return redirect()
-            ->route('dashboard')
-            ->with(
-                'success',
-                'Latar belakang berhasil diperbarui.'
-            );
-
-    })->name('dashboard.background');
-
-
+    Route::get(
+        '/sale-transactions/export/pdf',
+        [SaleTransactionController::class, 'exportPdf']
+    )->name('sale-transactions.export.pdf');
 
     /*
     |--------------------------------------------------------------------------
@@ -293,10 +125,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::delete('/profile', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
-
 });
-
-
 
 /*
 |--------------------------------------------------------------------------
@@ -304,4 +133,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

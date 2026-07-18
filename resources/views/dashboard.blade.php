@@ -137,7 +137,7 @@
         </h1>
 
         <p>
-            Selamat datang kembali, {{ Auth::user()->name }} 👋
+            Selamat datang kembali👋
         </p>
 
     </div>
@@ -174,7 +174,7 @@
 
     <!-- TOTAL PRODUK -->
 
-    <div class="col-md-4">
+    <div class="col-md-3">
 
         <div class="card dashboard-card h-100">
             <div class="card-body d-flex justify-content-between align-items-center">
@@ -201,38 +201,9 @@
     </div>
 
 
-    <!-- TOTAL KATEGORI -->
-
-    <div class="col-md-4">
-
-        <div class="card dashboard-card h-100">
-            <div class="card-body d-flex justify-content-between align-items-center">
-
-                <div>
-
-                    <div class="stat-title">
-                        Total Kategori
-                    </div>
-
-                    <div class="stat-number">
-                        {{ $kategoris->count() }}
-                    </div>
-
-                </div>
-
-                <div class="stat-icon">
-                    🏷️
-                </div>
-
-            </div>
-        </div>
-
-    </div>
-
-
     <!-- TOTAL STOK -->
 
-    <div class="col-md-4">
+    <div class="col-md-3">
 
         <div class="card dashboard-card h-100">
             <div class="card-body d-flex justify-content-between align-items-center">
@@ -258,10 +229,157 @@
 
     </div>
 
+
+    <!-- TOTAL TRANSAKSI PENJUALAN -->
+
+    <div class="col-md-3">
+
+        <div class="card dashboard-card h-100">
+            <div class="card-body d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <div class="stat-title">
+                        Total Transaksi
+                    </div>
+
+                    <div class="stat-number">
+                        {{ $totalTransaksi }}
+                    </div>
+
+                </div>
+
+                <div class="stat-icon">
+                    💳
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- TOTAL PENDAPATAN -->
+
+    <div class="col-md-3">
+
+        <div class="card dashboard-card h-100">
+            <div class="card-body d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <div class="stat-title">
+                        Total Pendapatan
+                    </div>
+
+                    <div class="stat-number">
+                        Rp {{ number_format($totalPendapatan, 0, ',', '.') }}
+                    </div>
+
+                </div>
+
+                <div class="stat-icon">
+                    💰
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
 </div>
 
 
-<!-- CHART -->
+<!-- SYSTEM INSIGHT -->
+
+<div class="row g-4 mb-4">
+
+    <div class="col-lg-6">
+
+        <div class="card dashboard-card">
+
+            <div class="card-body">
+
+                <h5 class="fw-bold mb-3">💡 System Insight</h5>
+
+                <div class="mb-3 p-3" style="background: #fef3c7; border-radius: 12px; border-left: 4px solid #f59e0b;">
+                    <div style="font-weight: 600; color: #92400e; margin-bottom: 5px;">
+                        Produk Stok Terendah
+                    </div>
+                    @if($produkStokTerendah)
+                        <div style="color: #78350f; font-size: 13px;">
+                            <strong>{{ $produkStokTerendah->nama_produk }}</strong> - Stok tersisa: <strong>{{ $produkStokTerendah->stok }}</strong> unit
+                        </div>
+                    @else
+                        <div style="color: #78350f; font-size: 13px;">Tidak ada data produk</div>
+                    @endif
+                </div>
+
+                <div class="p-3" style="background: #dbeafe; border-radius: 12px; border-left: 4px solid #3b82f6;">
+                    <div style="font-weight: 600; color: #1e40af; margin-bottom: 5px;">
+                        Produk Terlaris
+                    </div>
+                    @if($produkTerlaris)
+                        <div style="color: #1e3a8a; font-size: 13px;">
+                            <strong>{{ $produkTerlaris->nama_produk }}</strong> telah terjual <strong>{{ $produkTerlaris->sale_transactions_count }}</strong> kali
+                        </div>
+                    @else
+                        <div style="color: #1e3a8a; font-size: 13px;">Belum ada transaksi penjualan</div>
+                    @endif
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-lg-6">
+
+        <div class="card dashboard-card">
+
+            <div class="card-body">
+
+                <h5 class="fw-bold mb-3">🎯 Recommendation by System</h5>
+
+                <div class="mb-3 p-3" style="background: #fecaca; border-radius: 12px; border-left: 4px solid #ef4444;">
+                    <div style="font-weight: 600; color: #7f1d1d; margin-bottom: 5px;">
+                        ⚠️ Segera Restock
+                    </div>
+                    @if($produkStokTerendah && $produkStokTerendah->stok <= 10)
+                        <div style="color: #450a0a; font-size: 13px;">
+                            Stok <strong>{{ $produkStokTerendah->nama_produk }}</strong> hanya tersisa <strong>{{ $produkStokTerendah->stok }}</strong> unit. Lakukan restock segera untuk mencegah kehabisan stok.
+                        </div>
+                    @else
+                        <div style="color: #450a0a; font-size: 13px;">
+                            Stok produk dalam kondisi aman.
+                        </div>
+                    @endif
+                </div>
+
+                <div class="p-3" style="background: #bbf7d0; border-radius: 12px; border-left: 4px solid #10b981;">
+                    <div style="font-weight: 600; color: #065f46; margin-bottom: 5px;">
+                        ✨ Tingkatkan Promosi
+                    </div>
+                    @if($produkTerlaris)
+                        <div style="color: #064e3b; font-size: 13px;">
+                            <strong>{{ $produkTerlaris->nama_produk }}</strong> adalah produk terlaris. Pertimbangkan untuk meningkatkan promosi atau stok produk ini.
+                        </div>
+                    @else
+                        <div style="color: #064e3b; font-size: 13px;">
+                            Belum ada data penjualan untuk memberikan rekomendasi.
+                        </div>
+                    @endif
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 <div class="row g-4">
 
@@ -274,7 +392,7 @@
             <div class="card-body">
 
                 <h5 class="chart-title mb-4">
-                    Produk per Kategori
+                    Penjualan per Kategori
                 </h5>
 
                 <canvas id="kategoriChart"></canvas>
@@ -362,27 +480,28 @@ document.addEventListener('DOMContentLoaded', function () {
             data: {
 
                 labels: [
-                    @foreach($kategoris as $kategori)
+                    @foreach($penjualanKategori as $kategori)
                         '{{ $kategori->nama_kategori }}',
                     @endforeach
                 ],
 
-                datasets: [{
+datasets: [{
 
-                    label: 'Jumlah Produk',
+    label: 'Jumlah Penjualan',
 
-                    data: [
-                        @foreach($kategoris as $kategori)
-                            {{ $kategori->produks->count() }},
-                        @endforeach
-                    ],
+    data: [
+        @foreach($penjualanKategori as $kategori)
+            {{ $kategori->total_penjualan }},
+        @endforeach
+    ],
 
                     backgroundColor: [
-                        '#f59e0b',
-                        '#fb923c',
-                        '#fbbf24',
-                        '#fdba74',
-                        '#fcd34d'
+                        '#8B4513',
+                        '#D2691E',
+                        '#CD853F',
+                        '#DEB887',
+                        '#F5DEB3',
+                        '#D2B48C'
                     ],
 
                     borderRadius: 10,
@@ -450,12 +569,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     ],
 
                     backgroundColor: [
-                        '#f59e0b',
-                        '#fb923c',
-                        '#fbbf24',
-                        '#fdba74',
-                        '#fcd34d',
-                        '#fed7aa'
+                        '#8B4513',
+                        '#D2691E',
+                        '#CD853F',
+                        '#3B82F6',
+                        '#10B981',
+                        '#F59E0B',
+                        '#EC4899',
+                        '#6366F1',
+                        '#14B8A6',
+                        '#F97316'
                     ],
 
                     borderWidth: 0

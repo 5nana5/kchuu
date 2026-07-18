@@ -7,9 +7,11 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
+        "barryvdh/laravel-dompdf": "^3.1",
         "jeroennoten/laravel-adminlte": "^3.16",
         "laravel/framework": "^13.8",
-        "laravel/tinker": "^3.0"
+        "laravel/tinker": "^3.0",
+        "maatwebsite/excel": "^3.1"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -82,7 +84,8 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
-        }
+        },
+        "process-timeout": 2000
     },
     "minimum-stability": "stable",
     "prefer-stable": true

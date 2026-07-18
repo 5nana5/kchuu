@@ -51,7 +51,19 @@
             <i class="fas fa-cookie-bite me-2"></i>
             Produk Bakery
         </a>
+        <a href="{{ route('sale-transactions.index') }}"
+        class="list-group-item list-group-item-action border-0 rounded-3 mb-2 py-3 {{ request()->routeIs('sale-transactions.*') ? 'active' : '' }}">
 
+            <i class="fas fa-cash-register me-2"></i>
+            Transaksi Penjualan
+        </a>
+
+        <a href="{{ route('stock-transactions.index') }}"
+        class="list-group-item list-group-item-action border-0 rounded-3 py-3 {{ request()->routeIs('stock-transactions.*') ? 'active' : '' }}">
+
+            <i class="fas fa-boxes me-2"></i>
+            Barang Masuk
+        </a>
     </div>
 
 </div>

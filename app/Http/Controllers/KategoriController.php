@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Kategori;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class KategoriController extends Controller
 {
@@ -52,8 +53,12 @@ class KategoriController extends Controller
     {
         $request->validate([
 
-            'nama_kategori' =>
-                'required|string|max:255'
+            'nama_kategori' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('kategoris'),
+            ]
 
         ], [
 
@@ -61,7 +66,10 @@ class KategoriController extends Controller
                 'Nama kategori wajib diisi.',
 
             'nama_kategori.max' =>
-                'Nama kategori terlalu panjang.'
+                'Nama kategori terlalu panjang.',
+
+            'nama_kategori.unique' =>
+                'Nama kategori sudah ada.'
 
         ]);
 
@@ -80,24 +88,6 @@ class KategoriController extends Controller
                 'success',
                 'Kategori berhasil ditambahkan.'
             );
-    }
-
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | DETAIL KATEGORI
-    |--------------------------------------------------------------------------
-    */
-
-    public function show(Kategori $kategori)
-    {
-        $kategori->load('produks');
-
-        return view(
-            'kategori.show',
-            compact('kategori')
-        );
     }
 
 
@@ -129,8 +119,14 @@ class KategoriController extends Controller
 
         $request->validate([
 
-            'nama_kategori' =>
-                'required|string|max:255'
+            'nama_kategori' => [
+                'required',
+                'string',
+                'max:255',
+
+                Rule::unique('kategoris')
+                    ->ignore($kategori->id),
+            ]
 
         ], [
 
@@ -138,9 +134,13 @@ class KategoriController extends Controller
                 'Nama kategori wajib diisi.',
 
             'nama_kategori.max' =>
-                'Nama kategori terlalu panjang.'
+                'Nama kategori terlalu panjang.',
+
+            'nama_kategori.unique' =>
+                'Nama kategori sudah ada.'
 
         ]);
+
 
 
         $kategori->update([

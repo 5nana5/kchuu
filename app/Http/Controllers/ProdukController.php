@@ -76,24 +76,21 @@ class ProdukController extends Controller
     {
 
         $request->validate([
-
-            'kategori_id' =>
-                'required|exists:kategoris,id',
-
-            'nama_produk' =>
-                'required|string|max:255',
-
-            'harga' =>
-                'required|numeric|min:0',
-
-            'stok' =>
-                'required|integer|min:0',
-
-            'deskripsi' =>
-                'nullable|string',
-
-            'gambar' =>
-                'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'kategori_id' => 'required|exists:kategoris,id',
+            'nama_produk' => 'required|string|max:255',
+            'harga' => 'required|numeric|min:0',
+            'stok' => 'required|integer|min:0',
+            'deskripsi' => 'nullable|string',
+            'gambar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ],[
+            'kategori_id.required' => 'Kategori wajib dipilih.',
+            'kategori_id.exists' => 'Kategori tidak ditemukan.',
+            'nama_produk.required' => 'Nama produk wajib diisi.',
+            'harga.required' => 'Harga wajib diisi.',
+            'stok.required' => 'Stok wajib diisi.',
+            'gambar.image' => 'File harus berupa gambar.',
+            'gambar.mimes' => 'Format gambar harus jpg, jpeg, png, atau webp.',
+            'gambar.max' => 'Ukuran gambar maksimal 2 MB.',
         ]);
 
 
@@ -118,8 +115,7 @@ class ProdukController extends Controller
             'harga' =>
                 $request->harga,
 
-            'stok' =>
-                $request->stok,
+            'stok' => 0,
 
             'deskripsi' =>
                 $request->deskripsi,
@@ -185,24 +181,21 @@ class ProdukController extends Controller
     ) {
 
         $request->validate([
-
-            'kategori_id' =>
-                'required|exists:kategoris,id',
-
-            'nama_produk' =>
-                'required|string|max:255',
-
-            'harga' =>
-                'required|numeric|min:0',
-
-            'stok' =>
-                'required|integer|min:0',
-
-            'deskripsi' =>
-                'nullable|string',
-
-            'gambar' =>
-                'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'kategori_id' => 'required|exists:kategoris,id',
+            'nama_produk' => 'required|string|max:255',
+            'harga' => 'required|numeric|min:0',
+            'stok' => 'required|integer|min:0',
+            'deskripsi' => 'nullable|string',
+            'gambar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ],[
+            'kategori_id.required' => 'Kategori wajib dipilih.',
+            'kategori_id.exists' => 'Kategori tidak ditemukan.',
+            'nama_produk.required' => 'Nama produk wajib diisi.',
+            'harga.required' => 'Harga wajib diisi.',
+            'stok.required' => 'Stok wajib diisi.',
+            'gambar.image' => 'File harus berupa gambar.',
+            'gambar.mimes' => 'Format gambar harus jpg, jpeg, png, atau webp.',
+            'gambar.max' => 'Ukuran gambar maksimal 2 MB.',
         ]);
 
 
@@ -279,7 +272,19 @@ class ProdukController extends Controller
 
         }
 
+        if ($produk->saleTransactions()->exists()) {
+            return back()->with(
+                'error',
+                'Produk tidak dapat dihapus karena sudah memiliki transaksi penjualan.'
+            );
+        }
 
+        if ($produk->stockTransactions()->exists()) {
+        return back()->with(
+            'error',
+            'Produk tidak dapat dihapus karena memiliki riwayat stok.'
+        );
+    }
         $produk->delete();
 
 

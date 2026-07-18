@@ -207,9 +207,7 @@
 
 @endif
 
-
-
-<!-- TABLE -->
+<!-- TABLE PRODUK -->
 
 <div class="card custom-card">
 
@@ -223,157 +221,197 @@
 
                     <tr>
 
-                        <th width="70" class="ps-4">No</th>
+                        <th width="70" class="ps-4">
+                            No
+                        </th>
 
-                        <th width="120">Gambar</th>
+                        <th width="120">
+                            Gambar
+                        </th>
 
-                        <th>Produk</th>
+                        <th>
+                            Produk
+                        </th>
 
-                        <th>Kategori</th>
+                        <th>
+                            Kategori
+                        </th>
 
-                        <th>Harga</th>
+                        <th>
+                            Harga
+                        </th>
 
-                        <th>Stok</th>
+                        <th>
+                            Stok
+                        </th>
 
-                        <th width="220" class="text-center">Aksi</th>
+                        <th width="180" class="text-center">
+                            Aksi
+                        </th>
 
                     </tr>
 
                 </thead>
 
+
                 <tbody>
 
-                    @forelse($produks as $produk)
+
+                @forelse($produks as $produk)
+
 
                     <tr>
 
+
                         <td class="ps-4 fw-semibold">
+
                             {{ $loop->iteration }}
+
                         </td>
+
+
 
                         <td>
 
                             @if($produk->gambar)
 
-                            <img src="{{ asset('storage/' . $produk->gambar) }}"
-                                 class="product-image">
-
-                            @elseif($produk->gambar_link)
-
-                            <img src="{{ $produk->gambar_link }}"
-                                 class="product-image">
+                                <img src="{{ asset('storage/'.$produk->gambar) }}"
+                                     class="product-image">
 
                             @else
 
-                            <div class="product-image d-flex align-items-center justify-content-center bg-light text-muted">
-                                <i class="fas fa-image"></i>
-                            </div>
+                                <div class="text-muted small">
+                                    Tidak ada gambar
+                                </div>
 
                             @endif
 
                         </td>
 
+
+
                         <td>
 
-                            <div class="fw-semibold text-dark">
+                            <div class="fw-semibold">
+
                                 {{ $produk->nama_produk }}
+
                             </div>
 
+
                             <small class="text-muted">
-                                {{ $produk->deskripsi ?? 'Tidak ada deskripsi.' }}
+
+                                {{ $produk->deskripsi }}
+
                             </small>
 
                         </td>
 
+
+
                         <td>
 
                             <span class="badge-category">
+
                                 {{ $produk->kategori->nama_kategori ?? '-' }}
+
                             </span>
 
                         </td>
 
-                        <td class="fw-bold text-success">
 
-                            Rp {{ number_format($produk->harga, 0, ',', '.') }}
+
+                        <td>
+
+                            Rp {{ number_format($produk->harga,0,',','.') }}
 
                         </td>
+
+
 
                         <td>
 
                             <span class="badge-stock">
+
                                 {{ $produk->stok }}
+
                             </span>
 
                         </td>
 
+
+
                         <td>
 
-                            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                            <div class="d-flex justify-content-center gap-2">
 
-                                <!-- EDIT -->
 
-                                <button
-                                    class="btn btn-warning btn-sm btn-action btn-edit-product"
+                                <button type="button"
+                                        class="btn btn-warning btn-sm btn-action btn-edit-product"
 
-                                    data-id="{{ $produk->id }}"
-                                    data-nama="{{ $produk->nama_produk }}"
-                                    data-kategori="{{ $produk->kategori_id }}"
-                                    data-harga="{{ $produk->harga }}"
-                                    data-stok="{{ $produk->stok }}"
-                                    data-deskripsi="{{ $produk->deskripsi }}"
-                                    data-gambar="{{ $produk->gambar }}"
+                                        data-id="{{ $produk->id }}"
+                                        data-nama="{{ $produk->nama_produk }}"
+                                        data-kategori="{{ $produk->kategori_id }}"
+                                        data-harga="{{ $produk->harga }}"
+                                        data-deskripsi="{{ $produk->deskripsi }}"
+                                        data-gambar="{{ $produk->gambar }}"
 
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#editProductModal">
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editProductModal">
 
                                     <i class="fas fa-pen"></i>
 
                                 </button>
 
 
-                                <!-- DELETE -->
 
-                                <form action="{{ route('produk.destroy', $produk->id) }}"
+                                <form action="{{ route('produk.destroy',$produk->id) }}"
                                       method="POST">
 
                                     @csrf
                                     @method('DELETE')
 
+
                                     <button type="submit"
                                             class="btn btn-danger btn-sm btn-action"
-                                            onclick="return confirm('Hapus produk ini?')">
+                                            onclick="return confirm('Yakin ingin menghapus produk ini?')">
 
                                         <i class="fas fa-trash"></i>
 
                                     </button>
 
+
                                 </form>
+
 
                             </div>
 
                         </td>
 
+
                     </tr>
 
-                    @empty
+
+                @empty
+
 
                     <tr>
 
                         <td colspan="7"
                             class="text-center text-muted py-5">
 
-                            <i class="fas fa-box-open fs-2 mb-3 d-block"></i>
-
-                            Belum ada produk tersedia.
+                            Belum ada produk.
 
                         </td>
 
                     </tr>
 
-                    @endforelse
+
+                @endforelse
+
 
                 </tbody>
+
 
             </table>
 
@@ -382,10 +420,6 @@
     </div>
 
 </div>
-
-
-
-
 
 <!-- MODAL TAMBAH PRODUK -->
 
@@ -410,7 +444,6 @@
 
             </div>
 
-
             <form action="{{ route('produk.store') }}"
                   method="POST"
                   enctype="multipart/form-data">
@@ -432,8 +465,13 @@
                                    class="form-control"
                                    required>
 
-                        </div>
+                            @error('nama_produk')
+                            <div class="text-danger small mt-1">
+                                {{ $message }}
+                            </div>
+                            @enderror
 
+                        </div>
 
                         <div class="col-md-6">
 
@@ -459,8 +497,13 @@
 
                             </select>
 
-                        </div>
+                            @error('kategori_id')
+                            <div class="text-danger small mt-1">
+                                {{ $message }}
+                            </div>
+                            @enderror
 
+                        </div>
 
                         <div class="col-md-6">
 
@@ -471,24 +514,26 @@
                             <input type="number"
                                    name="harga"
                                    class="form-control"
+                                   min="0"
                                    required>
 
-                        </div>
+                            @error('harga')
+                            <div class="text-danger small mt-1">
+                                {{ $message }}
+                            </div>
+                            @enderror
 
+                        </div>
 
                         <div class="col-md-6">
 
-                            <label class="form-label fw-semibold">
-                                Stok
-                            </label>
-
-                            <input type="number"
-                                   name="stok"
-                                   class="form-control"
-                                   required>
+                            @error('stok')
+                            <div class="text-danger small mt-1">
+                                {{ $message }}
+                            </div>
+                            @enderror
 
                         </div>
-
 
                         <div class="col-12">
 
@@ -502,7 +547,6 @@
 
                         </div>
 
-
                         <div class="col-md-6">
 
                             <label class="form-label fw-semibold">
@@ -511,14 +555,24 @@
 
                             <input type="file"
                                    name="gambar"
-                                   class="form-control">
+                                   class="form-control"
+                                   accept=".jpg,.jpeg,.png,.webp">
+
+                            <small class="text-muted">
+                                Format: JPG, JPEG, PNG, WEBP (Maks. 2 MB)
+                            </small>
+
+                            @error('gambar')
+                            <div class="text-danger small mt-1">
+                                {{ $message }}
+                            </div>
+                            @enderror
 
                         </div>
-                        
+
                     </div>
 
                 </div>
-
 
                 <div class="modal-footer border-0">
 
@@ -547,10 +601,6 @@
 
 </div>
 
-
-
-
-
 <!-- MODAL EDIT PRODUK -->
 
 <div class="modal fade"
@@ -574,7 +624,6 @@
 
             </div>
 
-
             <form id="productEditForm"
                   method="POST"
                   enctype="multipart/form-data">
@@ -597,8 +646,13 @@
                                    class="form-control"
                                    required>
 
-                        </div>
+                            @error('nama_produk')
+                                <div class="text-danger small mt-1">
+                                    {{ $message }}
+                                </div>
+                            @enderror
 
+                        </div>
 
                         <div class="col-md-6">
 
@@ -611,17 +665,20 @@
                                     required>
 
                                 @foreach($kategoris as $kategori)
-
-                                <option value="{{ $kategori->id }}">
-                                    {{ $kategori->nama_kategori }}
-                                </option>
-
+                                    <option value="{{ $kategori->id }}">
+                                        {{ $kategori->nama_kategori }}
+                                    </option>
                                 @endforeach
 
                             </select>
 
-                        </div>
+                            @error('kategori_id')
+                                <div class="text-danger small mt-1">
+                                    {{ $message }}
+                                </div>
+                            @enderror
 
+                        </div>
 
                         <div class="col-md-6">
 
@@ -632,10 +689,16 @@
                             <input type="number"
                                    name="harga"
                                    class="form-control"
+                                   min="0"
                                    required>
 
-                        </div>
+                            @error('harga')
+                                <div class="text-danger small mt-1">
+                                    {{ $message }}
+                                </div>
+                            @enderror
 
+                        </div>
 
                         <div class="col-md-6">
 
@@ -646,10 +709,16 @@
                             <input type="number"
                                    name="stok"
                                    class="form-control"
+                                   min="0"
                                    required>
 
-                        </div>
+                            @error('stok')
+                                <div class="text-danger small mt-1">
+                                    {{ $message }}
+                                </div>
+                            @enderror
 
+                        </div>
 
                         <div class="col-12">
 
@@ -663,26 +732,33 @@
 
                         </div>
 
-
                         <div class="col-12">
 
                             <label class="form-label fw-semibold">
                                 Gambar Produk
-
                             </label>
 
                             <input type="file"
-                                name="gambar"
-                                class="form-control">
+                                   name="gambar"
+                                   class="form-control"
+                                   accept=".jpg,.jpeg,.png,.webp">
 
                             <small class="text-muted d-block mt-2">
+                                Format: JPG, JPEG, PNG, WEBP (Maks. 2 MB)
+                            </small>
 
+                            <small class="text-muted d-block">
                                 Gambar saat ini:
                                 <span id="old-image-name">
                                     Belum ada gambar
                                 </span>
+                            </small>
 
-                             </small>
+                            @error('gambar')
+                                <div class="text-danger small mt-1">
+                                    {{ $message }}
+                                </div>
+                            @enderror
 
                         </div>
 
@@ -690,22 +766,17 @@
 
                 </div>
 
-
                 <div class="modal-footer border-0">
 
                     <button type="button"
                             class="btn btn-light rounded-3"
                             data-bs-dismiss="modal">
-
                         Batal
-
                     </button>
 
                     <button type="submit"
                             class="btn btn-primary rounded-3 px-4">
-
                         Update
-
                     </button>
 
                 </div>
@@ -720,79 +791,47 @@
 
 @endsection
 
-
-
 @push('scripts')
 
 <script>
-
 document.addEventListener('DOMContentLoaded', () => {
 
-    const productEditForm =
-        document.getElementById('productEditForm');
-
-    const buttons =
-        document.querySelectorAll('.btn-edit-product');
+    const productEditForm = document.getElementById('productEditForm');
+    const buttons = document.querySelectorAll('.btn-edit-product');
 
     buttons.forEach(button => {
 
         button.addEventListener('click', () => {
 
-            const id =
-                button.dataset.id || '';
+            const id = button.dataset.id || '';
+            const nama = button.dataset.nama || '';
+            const kategori = button.dataset.kategori || '';
+            const harga = button.dataset.harga || '';
+            const stok = button.dataset.stok || '';
+            const deskripsi = button.dataset.deskripsi || '';
 
-            const nama =
-                button.dataset.nama || '';
+            productEditForm.action = `{{ url('produk') }}/${id}`;
 
-            const kategori =
-                button.dataset.kategori || '';
+            productEditForm.querySelector('[name="nama_produk"]').value = nama;
+            productEditForm.querySelector('[name="kategori_id"]').value = kategori;
+            productEditForm.querySelector('[name="harga"]').value = harga;
+            productEditForm.querySelector('[name="stok"]').value = stok;
+            productEditForm.querySelector('[name="deskripsi"]').value = deskripsi;
 
-            const harga =
-                button.dataset.harga || '';
+            // Tampilkan nama gambar lama jika ada
+            const oldImage = document.getElementById('old-image-name');
 
-            const stok =
-                button.dataset.stok || '';
+            if (oldImage) {
+                oldImage.textContent = button.dataset.gambar
+                    ? button.dataset.gambar.split('/').pop()
+                    : 'Belum ada gambar';
+            }
 
-            const deskripsi =
-                button.dataset.deskripsi || '';
-
-
-            productEditForm.action =
-                `{{ url('produk') }}/${id}`;
-
-
-            productEditForm.querySelector(
-                '[name="nama_produk"]'
-            ).value = nama;
-
-            productEditForm.querySelector(
-                '[name="kategori_id"]'
-            ).value = kategori;
-
-            productEditForm.querySelector(
-                '[name="harga"]'
-            ).value = harga;
-
-            productEditForm.querySelector(
-                '[name="stok"]'
-            ).value = stok;
-
-            productEditForm.querySelector(
-                '[name="deskripsi"]'
-            ).value = deskripsi;
-
-            const oldImageName = button.dataset.gambar
-                ? button.dataset.gambar.split('/').pop()
-                : 'Belum ada gambar';
-            document.getElementById('old-image-name')
-                .textContent = oldImageName;
         });
 
     });
 
 });
-
 </script>
 
 @endpush
-```
